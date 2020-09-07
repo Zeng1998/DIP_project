@@ -1,0 +1,76 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+#main {
+    position: absolute;
+    top:105px;
+    border:1px solid #96c2f1;
+    background:#eff7ff;
+}
+.navContainer {
+    position: fixed;
+    top: 115px;
+    right: 50px;
+    border:1px solid #96c2f1;
+    background:#eff7ff
+}
+.navigator {
+    position: relative;
+    width: 200px;
+    overflow: hidden;
+    z-index: 2;
+    cursor: pointer;
+}
+.navWindow {
+    box-sizing: border-box;
+    position: absolute;
+    border: 1px solid rgb(236, 12, 12);
+    z-index: 1;
+}
+.navigator img {
+    width: 100%;
+    position: relative;
+    display: block;
+    z-index: 0;
+}
+.scalePanel {
+    width: 100%;
+    height: 24px;
+    line-height: 24px;
+    font-size: 14px;
+    text-align: center;
+}
+#drag{
+    display: inline;
+}
+#nodrag{
+    display:none;
+}
+#cut{
+    display: inline;
+}
+#nocut{
+    display: none;
+}
+#cutted{
+    display:none;
+}
+.lb{
+    display: none;
+}
+.texiao{
+    display: none;
+}
+.ds{
+    display: none;
+}
+.hd{
+    display: none;
+}
+.rs{
+    display: none;
+}
+.up{
+    display: none;
+}

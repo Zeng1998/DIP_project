@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link type="text/css" rel="stylesheet" href="./layui/css/layui.css"/>
+    <link type="text/css" rel="stylesheet" href="./sty.css"/>
+</head>
+<body onload="reset()">
+<!--<h2>在线数字图像处理系统</h2>-->
+            <div style="z-index:100;">
+                <div class="layui-btn-group">
+                    <button type="button" onclick="up()" class="layui-btn layui-btn-sm layui-btn-warm">
+                        <i class="layui-icon layui-icon-file"></i>打开
+                    </button>
+                    <button type="button" onclick="save()" class="layui-btn layui-btn-sm layui-btn-normal">
+                        <i class="layui-icon layui-icon-download-circle"></i>另存为
+                    </button>
+                    <button type="button" onclick="quit()" class="layui-btn layui-btn-sm layui-btn-danger">
+                        <i class="layui-icon layui-icon-fonts-clear"></i>清空
+                    </button>
+                    <button type="button" onclick="p100()" class="layui-btn layui-btn-sm">
+                        <i class="layui-icon layui-icon-ok-circle"></i>100%
+                    </button>
+                    <button type="button" onclick="help()"  class="layui-btn layui-btn-sm layui-bg-gray">
+                        <i class="layui-icon layui-icon-help"></i>帮助
+                    </button>
+                    <button type="button" onclick="undo()" class="layui-btn layui-btn-danger layui-btn-sm">
+                        <i class="layui-icon layui-icon-left"></i>撤销
+                    </button>
+                    <button type="button" onclick="redo()" class="layui-btn layui-btn-warm layui-btn-sm">
+                        <i class="layui-icon layui-icon-right"></i>重做
+                    </button>
+                </div>
+                <br/>
+                <div class="layui-btn-group">
+                    <button type="button" id="drag" onclick="setDrag(true)" class="layui-btn layui-btn-sm" style="background:#009900;">拖动</button>
+                    <button type="button" id="nodrag" onclick="setDrag(false)" class="layui-btn layui-btn-sm layui-btn-danger">取消拖动</button>
+                    <button type="button" id="cut" onclick="cut()" class="layui-btn layui-btn-sm" style="background:#009900;">裁剪</button>
+                    <button type="button" id="nocut" onclick="nocut()" class="layui-btn layui-btn-sm layui-btn-danger">取消裁剪</button>
+                    <button type="button" id="cutted" onclick="cutted()" class="layui-btn layui-btn-sm layui-btn-normal">确认裁剪</button>
+                    <button type="button" onclick="rs()" class="layui-btn layui-btn-sm" style="background:#009966;">修改图像尺寸</button>
+                    <button type="button" onclick="water()" class="layui-btn layui-btn-sm" style="background:#009966;">插入水印</button>
+                    <button type="button" onclick="hd()" class="layui-btn layui-btn-sm" style="background:#0099CC;">灰度转换</button>
+                    <button type="button" onclick="ds()" class="layui-btn layui-btn-sm" style="background:#0099CC;">单色效果</button>
+                    <button type="button" onclick="lb()" class="layui-btn layui-btn-sm" style="background:#0099CC;">滤波</button>
+                    <button type="button" onclick="texiao()" class="layui-btn layui-btn-sm" style="background:#0099CC;">特效</button>
+                    
+                </div>
+                <br/>
+                <div class="layui-btn-group">
+                    <button type="button" onclick="file.click()" class="layui-btn layui-btn-sm layui-btn-warm up">本地上传</button>
+                    <input type="file" id="file" style="visibility: hidden; position: absolute;">
+                    <button type="button" onclick="net()" class="layui-btn layui-btn-sm layui-btn-warm up">网络图片</button>
+                    <button type="button" onclick="resize('nearest')" class="layui-btn layui-btn-sm rs">最邻近插值</button>
+                    <button type="button" onclick="resize('bilinear')" class="layui-btn layui-btn-sm rs">双线性插值</button>
+                    <button type="button" onclick="resize('bicubic')" class="layui-btn layui-btn-sm rs">双立方插值</button>
+                    <button type="button" onclick="gray()" class="layui-btn layui-btn-sm layui-bg-gray hd">灰度图</button>
+                    <button type="button" onclick="binary()" class="layui-btn layui-btn-sm layui-bg-black hd">图像二值化</button>
+                    <button type="button" onclick="neg()" class="layui-btn layui-btn-sm hd" style="background: #000066">负片效果
+                    </button>
+                    <!-- <button type="button" onclick="graystat()" class="layui-btn layui-btn-sm layui-bg-gray hd">灰度直方图</button> -->
+                    <button type="button" onclick="single('red')" class="layui-btn layui-btn-sm layui-bg-red ds">单色效果(红)</button>
+                    <button type="button" onclick="single('green')" class="layui-btn layui-btn-sm layui-bg-green ds">单色效果(绿)
+                    </button>
+                    <button type="button" onclick="single('blue')" class="layui-btn layui-btn-sm layui-bg-blue ds">单色效果(蓝)</button>
+                    <button type="button" onclick="average()" class="layui-btn layui-btn-sm lb" style="background:#0066FF                    ;">均值滤波</button>
+                    <button type="button" onclick="median()" class="layui-btn layui-btn-sm lb" style="background:#0066CC;">中值滤波</button>
+                    <button type="button" onclick="maxMin()" class="layui-btn layui-btn-sm lb" style="background:#006699;">最大最小值滤波</button>
+                    <button type="button" onclick="gaussBlur()" class="layui-btn layui-btn-sm lb" style="background:#006666;">高斯滤波</button>
+                    <button type="button" onclick="cov()" class="layui-btn layui-btn-sm lb" style="background:#006633;">更多滤波模板</button>
+                    <button type="button" onclick="moir()" class="layui-btn layui-btn-sm texiao" style="background:#330066;">摩尔纹滤镜</button>
+                    <button type="button" onclick="ripple()" class="layui-btn layui-btn-sm texiao" style="background:#330033;">水纹滤镜</button>
+                    <button type="button" onclick="sculpture()" class="layui-btn layui-btn-sm texiao" style="background:#330000;">浮雕效果</button>
+                </div>
+                <br/>
+            
+            </div> 
+            <div id="container" style="width:900px;height:100%;">
+                <canvas width="1000" height="500" id="main"></canvas>
+            </div>
+            <div class="navContainer">
+                <div class="navigator">
+                    <canvas width="200" height="120" id="nCanvas"></canvas>
+                    <div class="navWindow"></div>
+                </div>
+                <div class="scalePanel"></div>
+                <div>
+                    <label>R</label>
+                    <input class="color r" type="text" readonly="readonly"/>
+                    <br/>
+                    <label>G</label>
+                    <input class="color g" type="text" readonly="readonly"/>
+                    <br/>
+                    <label>B</label>
+                    <input class="color b" type="text" readonly="readonly"/>
+                    <br/>
+                    <label>A</label>
+                    <input class="color a" type="text" readonly="readonly"/>
+                    <br/>
+                    <label>X</label>
+                    <input class="position x" type="text"/>
+                    <br/>
+                    <label>Y</label>
+                    <input class="position y" type="text"/>
+                </div>
+            </div>
+</div>
+
+<canvas style="display: none;" id="iCanvas"></canvas>
+
+</body>
+<script src="./layui/layui.all.js"></script>
+<script src="my.js"></script>
+<script>
+    var layer = layui.layer;
+    var form =layui.form;
+    //创建自定义画布类
+    let mc = new MyCanvas();
+    // 初始化画布
+    mc.initial({
+        canvas: document.querySelector('#main'),
+        nCanvas: document.querySelector("#nCanvas"),
+        navigator: document.querySelector('.navigator'),
+        scalePanel: document.querySelector('.scalePanel'),
+    });
+    // 打开本地图片
+    document.querySelector('#file').onchange = function (e) {
+        var file = this.files[0]
+        imgSrc = (window.URL || window.webkitURL).createObjectURL(file);
+        localStorage.setItem("src", imgSrc);
+        image = new Image();
+        image.src = imgSrc;
+        mc.setImage(image)
+        up();
+    };
+
+    //打开网络图片
+    function net(){
+        layer.confirm(
+            '<form class="layui-form">\n' +
+            '  <div class="layui-form-item">\n' +
+            '      <input type="text" name="title" id="url" placeholder="URL" autocomplete="off" class="layui-input">\n' +
+            '  </div>' +
+            '</form>', {title: '输入正确的图片URL',area: '600px'}, function (index) {
+                var url = document.getElementById("url").value;
+                localStorage.setItem("src", url);
+                image = new Image();
+                image.src = url;
+                mc.setImage(image)
+                up();
+                layer.close(index);
+            });
+    }
+
+    document.querySelector('.x').onkeyup = function(e) {
+        // 兼容FF和IE和Opera
+        var event = e || window.event;
+        var key = event.which || event.keyCode || event.charCode;
+        if (key == 13) {
+            var x=document.querySelector('.x').value;
+            var y=document.querySelector('.y').value;
+            var a=mc.getPixes(x,y);
+            document.querySelector('.r').value=a.r;
+            document.querySelector('.g').value=a.g;
+            document.querySelector('.b').value=a.b;
+            document.querySelector('.a').value=a.a;
+        }
+    };
+
+    document.querySelector('.y').onkeyup = function(e) {
+        // 兼容FF和IE和Opera
+        var event = e || window.event;
+        var key = event.which || event.keyCode || event.charCode;
+        if (key == 13) {
+            var x=document.querySelector('.x').value;
+            var y=document.querySelector('.x').value;
+            var a=mc.getPixes(x,y);
+            document.querySelector('.r').value=a.r;
+            document.querySelector('.g').value=a.g;
+            document.querySelector('.b').value=a.b;
+            document.querySelector('.a').value=a.a;
+        }
+    };
+
+    //读取刷新前图片
+    function reset() {
+        image = new Image();
+        image.src = localStorage.getItem("src");
+        mc.setImage(image);
+    }
+
+    //负片效果
+    function neg() {
+        mc.neg();
+    }
+
+    //去色效果
+    function gray() {
+        mc.gray();
+    }
+
+    //单色效果
+    function single(color) {
+        mc.single(color);
+    }
+
+    //高斯滤波
+    function gaussBlur() {
+        mc.gaussBlur();
+    }
+
+    //撤销
+    function undo() {
+        mc.undo();
+    }
+
+    //重做
+    function redo() {
+        mc.redo();
+    }
+
+    //图片另存为
+    function save() {
+        layer.confirm(
+            '<form class="layui-form">\n' +
+            '  <div class="layui-form-item">\n' +
+            '      <input type="text" name="title" id="filename" placeholder="文件名" autocomplete="off" class="layui-input">\n' +
+            '  </div>' +
+            '</form>', {title: '输入文件名'}, function (index) {
+                var filename = document.getElementById("filename").value;
+                mc.save(filename);
+                layer.close(index);
+            });
+        
+    }
+
+    //设置拖动
+    function setDrag(o) {
+        mc.setDrag(o)
+        if (o) {
+            document.querySelector('#drag').style.display = 'none';
+            document.querySelector('#nodrag').style.display = 'inline';
+        } else {
+            document.querySelector('#nodrag').style.display = 'none';
+            document.querySelector('#drag').style.display = 'inline';
+        }
+    }
+
+    //裁剪
+    function cut() {
+        mc.cut();
+        document.querySelector('#cut').style.display = 'none';
+        document.querySelector('#nocut').style.display = 'inline';
+        document.querySelector('#cutted').style.display = 'inline';
+    }
+
+    //取消裁剪
+    function nocut() {
+        mc.nocut();
+        document.querySelector('#cut').style.display = 'inline';
+        document.querySelector('#nocut').style.display = 'none';
+        document.querySelector('#cutted').style.display = 'none';
+    }
+
+    //确认裁剪
+    function cutted() {
+        mc.cutted();
+        document.querySelector('#cut').style.display = 'inline';
+        document.querySelector('#nocut').style.display = 'none';
+        document.querySelector('#cutted').style.display = 'none';
+    }
+
+    //清空画板
+    function quit() {
+        mc.quit();
+    }
+
+    //图像二值化
+    function binary() {
+        mc.binary();
+    }
+
+    //边缘检测
+    function edge() {
+        mc.edge();
+    }
+
+    //恢复到原图
+    function ori(val) {
+        mc.ori();
+    }
+
+    //均值滤波
+    function average() {
+        mc.average(3, 1);
+    }
+
+    //中值滤波
+    function median() {
+        mc.median(3, 1);
+    }
+
+    //最大最小值滤波
+    function maxMin() {
+        mc.maxMin(3, 1);
+    }
+
+    //浮雕效果
+    function sculpture() {
+        mc.sculpture();
+    }
+
+    //水纹滤镜
+    function ripple() {
+        layer.msg('点击选择水纹中心');
+        document.onmousedown = function () {
+            var cx = document.querySelector('.x').value;
+            var cy = document.querySelector('.y').value;
+            mc.ripple(cy, cx);
+            document.onmousedown = null;
+        };
+    }
+
+    //摩尔纹滤镜
+    function moir() {
+        layer.msg('点击选择摩尔纹中心');
+        document.onmousedown = function () {
+            var cx = document.querySelector('.x').value;
+            var cy = document.querySelector('.y').value;
+            mc.moir(cx, cy);
+            document.onmousedown = null;
+        };
+    }
+
+    //旋转
+    function rotate(deg) {
+        mc.rotate(deg);
+    }
+
+    function show(a) {
+        if (a[0].style.display === 'inline') {
+            for (var i = 0; i < a.length; i++) {
+                a[i].style.display = 'none';
+            }
+        } else {
+            for (var i = 0; i < a.length; i++) {
+                a[i].style.display = 'inline';
+            }
+        }
+    }
+
+    function lb() {
+        var a = document.querySelectorAll('.lb');
+        show(a);
+    }
+
+    function texiao() {
+        var a = document.querySelectorAll('.texiao');
+        show(a);
+    }
+
+    function ds() {
+        var a = document.querySelectorAll('.ds');
+        show(a);
+    }
+
+    function hd() {
+        var a = document.querySelectorAll('.hd');
+        show(a);
+    }
+
+    function rs() {
+        var a = document.querySelectorAll('.rs');
+        show(a);
+    }
+    function up(){
+        var a = document.querySelectorAll('.up');
+        show(a);
+    }
+
+    //插值缩放
+    function resize(str) {
+        var a = mc.getImageSize();
+        var oldWidth = a.width;
+        var oldHeight = a.height;
+        layer.confirm(
+            '<form class="layui-form">\n' +
+            '  <div class="layui-form-item">\n' +
+            '      <input type="text" name="title" id="newWidth" placeholder="width" autocomplete="off" class="layui-input">\n' +
+            '  </div>' +
+            '  <div class="layui-form-item">\n' +
+            '      <input type="text" name="title" id="newHeight" placeholder="height" autocomplete="off" class="layui-input">\n' +
+            '  </div>' +
+            '</form>', {title: '输入新的尺寸(原尺寸:' + oldWidth + '*' + oldHeight + ')'}, function (index) {
+                var newWidth = document.getElementById("newWidth").value;
+                var newHeight = document.getElementById("newHeight").value;
+                if (str === 'nearest') {
+                    mc.resize_nearest(newWidth, newHeight);
+                } else if (str === 'bilinear') {
+                    mc.resize_bilinear(newWidth, newHeight);
+                } else if (str === 'bicubic') {
+                    mc.resize_bicubic(newWidth, newHeight);
+                }
+                layer.close(index);
+            });
+    }
+
+    //100%大小
+    function p100() {
+        mc.p100();
+    }
+
+    function help(){
+        layer.msg('见课程设计报告第三部分(系统运行文档)');
+    }
+    function water(){
+        layer.confirm(
+            '<form class="layui-form">\n' +
+            '  <div class="layui-form-item">\n' +
+            '      <input type="text" name="title" id="str" placeholder="水印文字(不超过5个字)" autocomplete="off" class="layui-input">\n' +
+            '  </div>' +
+            '  <div class="layui-form-item">\n' +
+            '      <input type="text" name="title" id="locX" placeholder="X" autocomplete="off" class="layui-input">\n' +
+            '  </div>' +
+            '  <div class="layui-form-item">\n' +
+            '      <input type="text" name="title" id="locY" placeholder="Y" autocomplete="off" class="layui-input">\n' +
+            '  </div>' +
+            '</form>', {title: '输入要添加的水印文字以及水印位置'}, function (index) {
+                var str=document.getElementById('str').value;
+                var locX = document.getElementById("locX").value;
+                var locY = document.getElementById("locY").value;
+                mc.water(str,locX,locY);
+                layer.close(index);
+            });
+    }
+    const temObjs={
+        "dt1":{ iTempW:3, iTempH:3, iTempMX:1, iTempMY:1, fpArray:[1,1,1,1,1,1,1,1,1], fCoef:1/9 },
+        "dt2":{ iTempW:3, iTempH:3, iTempMX:1, iTempMY:1, fpArray:[1,1,1,1,2,1,1,1,1], fCoef:1/10 },
+        "dt3":{ iTempW:3, iTempH:3, iTempMX:1, iTempMY:1, fpArray:[1,2,1,2,4,2,1,2,1], fCoef:1/16 },
+        "gt1":{ iTempW:3, iTempH:3, iTempMX:1, iTempMY:1, fpArray:[0,-1,0,-1,5,-1,0,-1,0], fCoef:1 },
+        "gt2":{ iTempW:3, iTempH:3, iTempMX:1, iTempMY:1, fpArray:[-1,-1,-1,-1,9,-1,-1,-1,-1], fCoef:1 },
+        "gt3":{ iTempW:3, iTempH:3, iTempMX:1, iTempMY:1, fpArray:[1,-2,1-2,5,-2,1,-2,1], fCoef:1 },
+        "py1":{ iTempW:3, iTempH:3, iTempMX:1, iTempMY:1, fpArray:[0,0,0,-1,1,0,0,0,0], fCoef:1 },
+        "py2":{ iTempW:3, iTempH:3, iTempMX:1, iTempMY:1, fpArray:[0,-1,0,0,1,0,0,0,0], fCoef:1 },
+        "py3":{ iTempW:3, iTempH:3, iTempMX:1, iTempMY:1, fpArray:[-1,0,0,0,1,0,0,0,0], fCoef:1 },
+        "pp1":{ iTempW:5, iTempH:3, iTempMX:2, iTempMY:1, fpArray:[-1,-1,-1,-1,-1,0,0,0,0,0,1,1,1,1,1], fCoef:1 },
+        "pp2":{ iTempW:3, iTempH:5, iTempMX:1, iTempMY:2, fpArray:[-1,0,1,-1,0,1,-1,0,1,-1,0,1,-1,0,1], fCoef:1 },
+        "by1":{ iTempW:3, iTempH:3, iTempMX:1, iTempMY:1, fpArray:[-1,0,-1,0,4,0,-1,0,-1], fCoef:1 },
+        "by2":{ iTempW:3, iTempH:3, iTempMX:1, iTempMY:1, fpArray:[-1,-1,-1,-1,8,-1,-1,-1,-1], fCoef:1 },
+        "by3":{ iTempW:3, iTempH:3, iTempMX:1, iTempMY:1, fpArray:[-1,-1,-1,-1,9,-1,-1,-1,-1], fCoef:1 },
+        "by4":{ iTempW:3, iTempH:3, iTempMX:1, iTempMY:1, fpArray:[1,-2,1,-2,4,-2,1,-2,1], fCoef:1 },
+    }
+    function cov(){
+        //弹出几个可选的卷积模板，也可自定义模板 
+        layer.confirm(
+            '<form class="layui-form">\n' +
+                '<p>低通滤波</p>\n'+
+                '<div class="layui-form-item">\n'+
+                    '<div>\n'+
+                        '<input type="radio" name="tem" value="dt1" title=\"<img src=\'./images/dt1.png\' widht=\'150\' height=\'150\'>\'\">\n'+
+                        '<input type="radio" name="tem" value="dt2" title=\"<img src=\'./images/dt2.png\' widht=\'150\' height=\'150\'>\'\">\n'+
+                        '<input type="radio" name="tem" value="dt3" title=\"<img src=\'./images/dt3.png\' widht=\'150\' height=\'150\'>\'\">\n'+
+                    '</div>\n'+
+                '</div>\n'+
+                '<p>高通滤波</p>\n'+
+                '<div class="layui-form-item">\n'+
+                    '<div>\n'+
+                        '<input type="radio" name="tem" value="gt1" title=\"<img src=\'./images/gt1.png\' widht=\'150\' height=\'150\'>\'\">\n'+
+                        '<input type="radio" name="tem" value="gt2" title=\"<img src=\'./images/gt2.png\' widht=\'150\' height=\'150\'>\'\">\n'+
+                        '<input type="radio" name="tem" value="gt3" title=\"<img src=\'./images/gt3.png\' widht=\'150\' height=\'150\'>\'\">\n'+
+                    '</div>\n'+
+                '</div>\n'+
+                '<p>平移和差分边缘检测</p>\n'+
+                '<div class="layui-form-item">\n'+
+                    '<div>\n'+
+                        '<input type="radio" name="tem" value="py1" title=\"<img src=\'./images/py1.png\' widht=\'150\' height=\'150\'>\'\">\n'+
+                        '<input type="radio" name="tem" value="py2" title=\"<img src=\'./images/py2.png\' widht=\'150\' height=\'150\'>\'\">\n'+
+                        '<input type="radio" name="tem" value="py3" title=\"<img src=\'./images/py3.png\' widht=\'150\' height=\'150\'>\'\">\n'+
+                    '</div>\n'+
+                '</div>\n'+
+                '<p>匹配滤波边缘检测</p>\n'+
+                '<div class="layui-form-item">\n'+
+                    '<div>\n'+
+                        '<input type="radio" name="tem" value="pp1" title=\"<img src=\'./images/pp1.png\' widht=\'150\' height=\'150\'>\'\">\n'+
+                        '<input type="radio" name="tem" value="pp2" title=\"<img src=\'./images/pp2.png\' widht=\'150\' height=\'150\'>\'\">\n'+
+                    '</div>\n'+
+                '</div>\n'+
+                '<p>边缘检测</p>\n'+
+                '<div class="layui-form-item">\n'+
+                    '<div>\n'+
+                        '<input type="radio" name="tem" value="by1" title=\"<img src=\'./images/by1.png\' widht=\'150\' height=\'150\'>\'\">\n'+
+                        '<input type="radio" name="tem" value="by2" title=\"<img src=\'./images/by2.png\' widht=\'150\' height=\'150\'>\'\">\n'+
+                        '<input type="radio" name="tem" value="by3" title=\"<img src=\'./images/by3.png\' widht=\'150\' height=\'150\'>\'\">\n'+
+                        '<input type="radio" name="tem" value="by4" title=\"<img src=\'./images/by4.png\' widht=\'150\' height=\'150\'>\'\">\n'+
+                    '</div>\n'+
+                '</div>\n'+
+                '<p>自定义模板</p>\n'+
+                '<div class="layui-form-item">\n'+
+                    '<div>\n'+
+                        '<input type="radio" name="tem" value="my" title=\"自定义\"">\n'+
+                    '</div>\n'+
+                '</div>\n'+
+                '<div class="layui-form-item">\n'+
+                    '<div class="layui-inline">\n'+
+                    '<div class="layui-input-inline" style="width: 100px;">\n'+
+                    '<input name="iTempW" id="iTempW" required lay-verify="required" placeholder="模板宽度" autocomplete="off" class="layui-input">\n'+
+                    '</div>\n'+
+                    '<div class="layui-input-inline" style="width: 100px;">\n'+
+                    '<input name="iTempH" id="iTempH" required lay-verify="required" placeholder="模板高度" autocomplete="off" class="layui-input">\n'+
+                    '</div>\n'+
+                    '<div class="layui-input-inline" style="width: 100px;">\n'+
+                    '<input name="fCoef" id="fCoef" required lay-verify="required" placeholder="模板系数" autocomplete="off" class="layui-input">\n'+
+                    '</div>\n'+
+                    '<div class="layui-input-inline" style="width: 280px;">\n'+
+                    '<input name="fpArray" id="fpArray" required lay-verify="required" placeholder="模板，格式为[x1,x2,...xn]" autocomplete="off" class="layui-input">\n'+
+                    '</div>\n'+
+                    '</div>\n'+
+                '</div>\n'+
+            '</form>\n', {title: '选择滤波模板或创建自定义模板', offset: ['10%', '25%'],area: ['700px', '400px']}, function (index) {
+                var radio=document.getElementsByName("tem");
+                var selectvalue=null; 
+                for(var i=0;i<radio.length;i++){
+                    if(radio[i].checked==true) {
+                        selectvalue=radio[i].value;
+                        break;
+                    }
+                }
+                //构造模板对象，进行卷积
+                var tempObj=null;
+                if(selectvalue==='my'){
+                    var iTempW=parseInt(document.getElementById('iTempW').value);
+                    var iTempH=parseInt(document.getElementById('iTempH').value);
+                    var fpArray=eval(document.getElementById('fpArray').value);
+                    var fCoef=eval(document.getElementById('fCoef').value);
+                    tempObj={ iTempW:iTempW, iTempH:iTempH, iTempMX:parseInt(Math.floor(iTempW/2)), iTempMY:parseInt(Math.floor(iTempH/2)), fpArray:fpArray, fCoef:fCoef };
+                }else{
+                    tempObj=temObjs[selectvalue];
+                }                
+                // var tempObj={ iTempW:3, iTempH:3, iTempMX:1, iTempMY:1, fpArray:[-1,0,-1,0,4,0,-1,0,-1], fCoef:1 };
+                mc.template(tempObj);
+                layer.close(index);
+            });
+            form.render();
+    }
+</script>
+</html>
